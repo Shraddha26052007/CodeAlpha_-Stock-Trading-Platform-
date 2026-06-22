@@ -1,0 +1,147 @@
+# CodeAlpha_-Stock-Trading-Platform-
+import java.util.*;
+
+class Stock {
+    String name;
+    double price;
+
+    Stock(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+}
+
+class Portfolio {
+    HashMap<String, Integer> holdings = new HashMap<>();
+
+    void buy(String stock, int quantity) {
+        holdings.put(stock, holdings.getOrDefault(stock, 0) + quantity);
+        System.out.println("Stock Purchased Successfully!");
+    }
+
+    void sell(String stock, int quantity) {
+        if (holdings.containsKey(stock) && holdings.get(stock) >= quantity) {
+            holdings.put(stock, holdings.get(stock) - quantity);
+
+            if (holdings.get(stock) == 0) {
+                holdings.remove(stock);
+            }
+
+            System.out.println("Stock Sold Successfully!");
+        } else {
+            System.out.println("Not enough shares to sell.");
+        }
+    }
+
+    void display(ArrayList<Stock> market) {
+        if (holdings.isEmpty()) {
+            System.out.println("Portfolio is Empty.");
+            return;
+        }
+
+        double total = 0;
+
+        System.out.println("\n===== YOUR PORTFOLIO =====");
+        System.out.println("Stock\tQuantity\tPrice\tValue");
+
+        for (Stock s : market) {
+            if (holdings.containsKey(s.name)) {
+                int qty = holdings.get(s.name);
+                double value = qty * s.price;
+                total += value;
+
+                System.out.println(s.name + "\t" + qty + "\t\t₹" + s.price + "\t₹" + value);
+            }
+        }
+
+        System.out.println("-------------------------------");
+        System.out.println("Total Portfolio Value = ₹" + total);
+    }
+}
+
+public class StockTradingPlatform {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        ArrayList<Stock> market = new ArrayList<>();
+
+        market.add(new Stock("TCS", 3500));
+        market.add(new Stock("Infosys", 1600));
+        market.add(new Stock("Wipro", 500));
+        market.add(new Stock("HCL", 1400));
+        market.add(new Stock("Reliance", 2800));
+
+        Portfolio portfolio = new Portfolio();
+
+        while (true) {
+
+            System.out.println("\n===== STOCK TRADING PLATFORM =====");
+            System.out.println("1. Display Market Data");
+            System.out.println("2. Buy Stock");
+            System.out.println("3. Sell Stock");
+            System.out.println("4. View Portfolio");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.println("\nAvailable Stocks");
+                    System.out.println("-------------------------");
+                    for (Stock s : market) {
+                        System.out.println(s.name + " - ₹" + s.price);
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter Stock Name: ");
+                    String buyStock = sc.next();
+
+                    System.out.print("Enter Quantity: ");
+                    int buyQty = sc.nextInt();
+
+                    boolean foundBuy = false;
+
+                    for (Stock s : market) {
+                        if (s.name.equalsIgnoreCase(buyStock)) {
+                            portfolio.buy(s.name, buyQty);
+                            foundBuy = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundBuy)
+                        System.out.println("Stock Not Found!");
+
+                    break;
+
+                case 3:
+                    System.out.print("Enter Stock Name: ");
+                    String sellStock = sc.next();
+
+                    System.out.print("Enter Quantity: ");
+                    int sellQty = sc.nextInt();
+
+                    portfolio.sell(sellStock, sellQty);
+
+                    break;
+
+                case 4:
+                    portfolio.display(market);
+                    break;
+
+                case 5:
+                    System.out.println("Thank You for using Stock Trading Platform.");
+                    sc.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+        }
+    }
+}
